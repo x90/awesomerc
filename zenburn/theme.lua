@@ -8,11 +8,11 @@
 
 -- {{{ Main
 theme = {}
-theme.wallpaper_cmd = { "awsetbg /usr/share/awesome/themes/zenburn/zenburn-background.png" }
+theme.wallpaper_cmd = {}
 -- }}}
 
 -- {{{ Styles
-theme.font      = "sans 8"
+theme.font      = "sans 16"
 
 -- {{{ Colors
 theme.fg_normal = "#DCDCCC"
@@ -66,7 +66,7 @@ theme.mouse_finder_color = "#CC9393"
 -- menu_[bg|fg]_[normal|focus]
 -- menu_[border_color|border_width]
 theme.menu_height = "15"
-theme.menu_width  = "100"
+theme.menu_width  = "200"
 -- }}}
 
 -- {{{ Icons
