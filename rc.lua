@@ -65,6 +65,7 @@ layouts =
     --awful.layout.suit.spiral.dwindle,
     --awful.layout.suit.magnifier
 }
+no_border_layout = awful.layout.suit.max
 -- }}}
 
 -- {{{ Tags
@@ -253,7 +254,21 @@ globalkeys = awful.util.table.join(
     --awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1)      end),
     --awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1)         end),
     --awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1)         end),
-    awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
+    awful.key({ modkey,           }, "space", function () 
+      awful.layout.inc(layouts,  1) 
+      for c in awful.client.cycle(function(c) return true end) do
+        if awful.layout.get(mouse.screen) ~= no_border_layout then
+          c.border_width = 1
+        else 
+          c.border_width = 0
+        end
+        if c == client.focus then
+          c.border_color = beautiful.border_focus
+        else
+          c.border_color = beautiful.border_normal
+        end
+      end
+    end),
     --awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
 
     awful.key({ modkey, "Control" }, "n", awful.client.restore),
