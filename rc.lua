@@ -10,6 +10,7 @@ local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
+local textbox = require("wibox.widget.textbox")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -127,6 +128,7 @@ mytextclock = awful.widget.textclock()
 
 -- Create a wibox for each screen and add it
 mywibox = {}
+controlbox = {}
 mypromptbox = {}
 mylayoutbox = {}
 mytaglist = {}
@@ -173,6 +175,23 @@ mytasklist.buttons = awful.util.table.join(
                                               if client.focus then client.focus:raise() end
                                           end))
 
+control_prev = textbox()
+control_prev:buttons(awful.util.table.join(
+  awful.button({ }, 1, function()
+    awful.client.focus.byidx(-1)
+    if client.focus then client.focus:raise() end
+  end),
+  awful.button({ }, 3, awful.tag.viewprev)
+))
+control_next = textbox()
+control_next:buttons(awful.util.table.join(
+  awful.button({ }, 1, function()
+    awful.client.focus.byidx(1)
+    if client.focus then client.focus:raise() end
+  end),
+  awful.button({ }, 3, awful.tag.viewnext)
+))
+
 for s = 1, screen.count() do
     -- Create a promptbox for each screen
     mypromptbox[s] = awful.widget.prompt()
@@ -191,7 +210,14 @@ for s = 1, screen.count() do
     mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
     -- Create the wibox
-    mywibox[s] = awful.wibox({ position = "bottom", screen = s, height = 1 })
+    mywibox[s] = awful.wibox({ position = "bottom", screen = s, height = 2 })
+
+    -- Control box
+    controlbox[s] = awful.wibox({ position = "left", screen = s, width = 1 })
+    local control_layout = wibox.layout.flex.vertical()
+    control_layout:add(control_prev)
+    control_layout:add(control_next)
+    controlbox[s]:set_widget(control_layout)
 
     -- Widgets that are aligned to the left
     local left_layout = wibox.layout.fixed.horizontal()
@@ -224,24 +250,30 @@ root.buttons(awful.util.table.join(
 -- }}}
 
 -- {{{ Key bindings
+function set_volumn(s)
+  awful.util.spawn("amixer set Master -- -" .. s .. "dB &")
+  awful.util.spawn("amixer set PCM 80% &")
+end
+
 globalkeys = awful.util.table.join(
     -- Programs
-    awful.key({}, "#179", function() awful.util.spawn("scrot") end),
-    awful.key({}, "#152", function() awful.util.spawn("VBoxManage startvm xp") end),
-    awful.key({ modkey, }, "y", function() awful.util.spawn("sudo " .. terminal) end),
-    awful.key({ modkey, }, "/", function() awful.util.spawn("chromium") end),
+    awful.key({}, "#179", function() awful.util.spawn("scrot &") end),
+    awful.key({}, "#152", function() awful.util.spawn("VBoxManage startvm xp &") end),
+    awful.key({ modkey, }, "y", function() awful.util.spawn("sudo " .. terminal .. " &") end),
+    awful.key({ modkey, }, "/", function() awful.util.spawn("chromium &") end),
 
     -- Volume
-    awful.key({ modkey, }, "1", function() awful.util.spawn("amixer set Master -- -45dB && amixer set PCM 80%") end),
-    awful.key({ modkey, }, "6", function() awful.util.spawn("amixer set Master -- -33dB && amixer set PCM 80%") end),
-    awful.key({ modkey, }, "7", function() awful.util.spawn("amixer set Master -- -25.5dB && amixer set PCM 80%") end),
-    awful.key({ modkey, }, "8", function() awful.util.spawn("amixer set Master -- -19.5dB && amixer set PCM 80%") end),
-    awful.key({ modkey, }, "9", function() awful.util.spawn("amixer set Master -- -15dB && amixer set PCM 80%") end),
-    awful.key({ modkey, }, "0", function() awful.util.spawn("amixer set Master -- -10.5dB && amixer set PCM 80%") end),
+    awful.key({ modkey, }, "1", function() set_volumn("45") end),
+    awful.key({ modkey, }, "6", function() set_volumn("33") end),
+    awful.key({ modkey, }, "7", function() set_volumn("25") end),
+    awful.key({ modkey, }, "8", function() set_volumn("19") end),
+    awful.key({ modkey, }, "9", function() set_volumn("15") end),
+    awful.key({ modkey, }, "0", function() set_volumn("10") end),
 
     -- Tags
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
+    awful.key({ modkey,           }, "l",      awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
 
     awful.key({ modkey,           }, "j",
@@ -275,12 +307,12 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
 
-    awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
-    awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),
-    awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1)      end),
-    awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1)      end),
-    awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1)         end),
-    awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1)         end),
+    --awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
+    --awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),
+    --awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1)      end),
+    --awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1)      end),
+    --awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1)         end),
+    --awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1)         end),
     awful.key({ modkey,           }, "space", function () 
       awful.layout.inc(layouts,  1) 
       for c in awful.client.iterate(function(c) return true end) do
@@ -294,10 +326,10 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "h", function()
       --mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible
       box = mywibox[mouse.screen]
-      if box.height == 1 then
+      if box.height == 3 then
         box.height = 30
       else
-        box.height = 1
+        box.height = 3
       end
     end),
 
@@ -312,7 +344,8 @@ globalkeys = awful.util.table.join(
                   awful.util.getdir("cache") .. "/history_eval")
               end),
     -- Menubar
-    awful.key({ modkey }, "p", function() menubar.show() end)
+    awful.key({ modkey }, "o", function() menubar.show() end),
+    awful.key({ modkey }, "p", function() awful.util.spawn("gnome-do &") end)
 )
 
 clientkeys = awful.util.table.join(
