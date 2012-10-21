@@ -127,7 +127,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 mytextclock = awful.widget.textclock()
 
 -- Create a wibox for each screen and add it
-mywibox = {}
+--mywibox = {}
 controlbox = {}
 mypromptbox = {}
 mylayoutbox = {}
@@ -181,7 +181,9 @@ control_prev:buttons(awful.util.table.join(
     awful.client.focus.byidx(-1)
     if client.focus then client.focus:raise() end
   end),
-  awful.button({ }, 3, awful.tag.viewprev)
+  awful.button({ }, 3, function()
+    awful.tag.viewprev()
+  end)
 ))
 control_next = textbox()
 control_next:buttons(awful.util.table.join(
@@ -189,7 +191,9 @@ control_next:buttons(awful.util.table.join(
     awful.client.focus.byidx(1)
     if client.focus then client.focus:raise() end
   end),
-  awful.button({ }, 3, awful.tag.viewnext)
+  awful.button({ }, 3, function()
+    awful.tag.viewnext()
+  end)
 ))
 
 for s = 1, screen.count() do
@@ -210,7 +214,7 @@ for s = 1, screen.count() do
     mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
     -- Create the wibox
-    mywibox[s] = awful.wibox({ position = "bottom", screen = s, height = 2 })
+    --mywibox[s] = awful.wibox({ position = "bottom", screen = s, height = 2 })
 
     -- Control box
     controlbox[s] = awful.wibox({ position = "left", screen = s, width = 1 })
@@ -220,24 +224,24 @@ for s = 1, screen.count() do
     controlbox[s]:set_widget(control_layout)
 
     -- Widgets that are aligned to the left
-    local left_layout = wibox.layout.fixed.horizontal()
-    left_layout:add(mylauncher)
-    left_layout:add(mytaglist[s])
-    left_layout:add(mypromptbox[s])
+    --local left_layout = wibox.layout.fixed.horizontal()
+    --left_layout:add(mylauncher)
+    --left_layout:add(mytaglist[s])
+    --left_layout:add(mypromptbox[s])
 
     -- Widgets that are aligned to the right
-    local right_layout = wibox.layout.fixed.horizontal()
-    if s == 1 then right_layout:add(wibox.widget.systray()) end
-    right_layout:add(mytextclock)
-    right_layout:add(mylayoutbox[s])
+    --local right_layout = wibox.layout.fixed.horizontal()
+    --if s == 1 then right_layout:add(wibox.widget.systray()) end
+    --right_layout:add(mytextclock)
+    --right_layout:add(mylayoutbox[s])
 
     -- Now bring it all together (with the tasklist in the middle)
-    local layout = wibox.layout.align.horizontal()
-    layout:set_left(left_layout)
-    layout:set_middle(mytasklist[s])
-    layout:set_right(right_layout)
+    --local layout = wibox.layout.align.horizontal()
+    --layout:set_left(left_layout)
+    --layout:set_middle(mytasklist[s])
+    --layout:set_right(right_layout)
 
-    mywibox[s]:set_widget(layout)
+    --mywibox[s]:set_widget(layout)
 end
 -- }}}
 
@@ -323,15 +327,15 @@ globalkeys = awful.util.table.join(
 
     awful.key({ modkey, "Control" }, "n", awful.client.restore),
 
-    awful.key({ modkey,           }, "h", function()
-      --mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible
-      box = mywibox[mouse.screen]
-      if box.height == 3 then
-        box.height = 30
-      else
-        box.height = 3
-      end
-    end),
+    --awful.key({ modkey,           }, "h", function()
+    --  --mywibox[mouse.screen].visible = not mywibox[mouse.screen].visible
+    --  box = mywibox[mouse.screen]
+    --  if box.height == 3 then
+    --    box.height = 30
+    --  else
+    --    box.height = 3
+    --  end
+    --end),
 
     -- Prompt
     awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
