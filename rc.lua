@@ -217,7 +217,7 @@ for s = 1, screen.count() do
     --mywibox[s] = awful.wibox({ position = "bottom", screen = s, height = 2 })
 
     -- Control box
-    controlbox[s] = awful.wibox({ position = "left", screen = s, width = 1 })
+    controlbox[s] = awful.wibox({ position = "left", screen = s, width = 2 })
     local control_layout = wibox.layout.flex.vertical()
     control_layout:add(control_prev)
     control_layout:add(control_next)
@@ -261,10 +261,10 @@ end
 
 globalkeys = awful.util.table.join(
     -- Programs
-    awful.key({}, "#179", function() awful.util.spawn("scrot &") end),
+    awful.key({}, "#179", function() awful.util.spawn("scrot") end),
     awful.key({}, "#152", function() awful.util.spawn("VBoxManage startvm xp &") end),
     awful.key({ modkey, }, "y", function() awful.util.spawn("sudo " .. terminal .. " &") end),
-    awful.key({ modkey, }, "/", function() awful.util.spawn("chromium &") end),
+    awful.key({ modkey, }, "/", function() awful.util.spawn("chromium") end),
 
     -- Volume
     awful.key({ modkey, }, "1", function() set_volumn("45") end),
@@ -471,6 +471,6 @@ client.connect_signal("manage", set_client_border)
 -- }}}
 
 awful.util.spawn("/media/store/script/potd.py &")
-awful.util.spawn("python2 /media/store/opt/goagent/local/proxy.py &")
-awful.util.spawn("/media/store/script/ssh_vps &")
 awful.util.spawn("xsetroot -cursor_name left_ptr &")
+awful.util.spawn("/home/reus/gotunnel/client/client")
+awful.util.spawn("fcitx -r -d")
