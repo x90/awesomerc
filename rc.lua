@@ -97,7 +97,7 @@ end
 tags = {}
 for s = 1, screen.count() do
     -- Each screen has its own tag table.
-    tags[s] = awful.tag({" > ", " >> ", " >>> "}, s, layouts[1])
+    tags[s] = awful.tag({"Left", "Right"}, s, layouts[1])
 end
 -- }}}
 
@@ -472,5 +472,7 @@ client.connect_signal("manage", set_client_border)
 
 awful.util.spawn("/media/store/script/potd.py &")
 awful.util.spawn("xsetroot -cursor_name left_ptr &")
-awful.util.spawn("/home/reus/gotunnel/client/client")
+awful.util.spawn("tmux new-session -d '/media/store/script/gotun'")
+--awful.util.spawn("tmux new-session -d '/home/reus/gotunnel/client/client'")
 awful.util.spawn("fcitx -r -d")
+awful.util.spawn("sudo /media/store/script/kbdlimit")
